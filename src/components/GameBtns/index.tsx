@@ -106,7 +106,7 @@ export default function GameBtns({
   return (
     <S.StyledBtnWrapper>
       {isGameOver ? (
-        <StyledButton onClick={() => resetGame()} $isSubmit>
+        <StyledButton onClick={resetGame} $isSubmit>
           Начать заново
         </StyledButton>
       ) : (

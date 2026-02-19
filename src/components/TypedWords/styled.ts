@@ -165,9 +165,7 @@ export const StyledLetter = styled.div<{
     `}
 `;
 
-export const StyledGameLostText = styled.div<{
-  $isShown: boolean;
-}>`
+export const StyledGameLostText = styled.div`
   opacity: 0;
   z-index: -1;
   width: 100%;
@@ -178,11 +176,4 @@ export const StyledGameLostText = styled.div<{
   text-align: center;
   top: 10%;
   left: 0;
-
-  ${({ $isShown }) =>
-    $isShown &&
-    css`
-      opacity: 1;
-      transition: all 1s;
-    `}
 `;
