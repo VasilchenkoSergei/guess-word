@@ -1,0 +1,43 @@
+import React, { useState } from 'react';
+import { StyledButton } from '@/styled';
+import { GAME_SETTINGS } from '@/constants';
+import * as S from './styled';
+import { IGameSettingBtns } from './types';
+
+export default function GameSettingBtns({
+  onChangeSettingsCallback,
+  wordLength,
+}: IGameSettingBtns) {
+  const [currentWordLength, setCurrentWordLength] = useState(
+    wordLength || GAME_SETTINGS[0].wordLength
+  );
+
+  const onChangeWordLength = (e: React.MouseEvent<HTMLDivElement>) => {
+    const chosenWordLength = (e.target as HTMLDivElement).dataset.id;
+
+    if (chosenWordLength) {
+      setCurrentWordLength(+chosenWordLength);
+      const currentGameSettings = GAME_SETTINGS.find(
+        ({ wordLength }) => wordLength === +chosenWordLength
+      );
+
+      localStorage.setItem('wordLength', chosenWordLength.toString());
+      onChangeSettingsCallback(currentGameSettings);
+    }
+  };
+
+  return (
+    <S.StyledGameSettings onClick={onChangeWordLength}>
+      {GAME_SETTINGS.map(({ wordLength, name }) => (
+        <StyledButton
+          data-id={wordLength}
+          $isActive={wordLength === currentWordLength}
+          $isSettingsBtn
+          key={wordLength}
+        >
+          {name}
+        </StyledButton>
+      ))}
+    </S.StyledGameSettings>
+  );
+}

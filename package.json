@@ -1,0 +1,60 @@
+{
+  "name": "guess_word",
+  "version": "1.0.0",
+  "description": "word game",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "rsbuild dev",
+    "build": "rsbuild build",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VasilchenkoSergei/guess-word.git"
+  },
+  "keywords": [
+    "word",
+    "game",
+    "guess"
+  ],
+  "author": "Vasilchenko Sergei",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VasilchenkoSergei/guess-word/issues"
+  },
+  "homepage": "https://github.com/VasilchenkoSergei/guess-word#readme",
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0",
+    "styled-components": "^6.1.19",
+    "styled-normalize": "^8.1.1"
+  },
+  "devDependencies": {
+    "@rsbuild/core": "^1.4.12",
+    "@rsbuild/plugin-react": "^1.3.4",
+    "@rsbuild/plugin-svgr": "^1.2.1",
+    "@types/node": "^24.1.0",
+    "@vitejs/plugin-react": "^4.4.1",
+    "typescript": "^5.9.2",
+    "vite": "^6.3.5",
+    "vite-plugin-svgr": "^4.3.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "dependencies": {
+    "@module-federation/rsbuild-plugin": "^2.0.1"
+  }
+}
