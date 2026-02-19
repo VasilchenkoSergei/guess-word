@@ -32,8 +32,6 @@ export default function Alphabet({ typedWords, alphabet, onChangeLettersCallback
     setUsedLetters(typedWords?.map(({ word }) => word).flat());
   }, [typedWords]);
 
-  
-
   return (
     <S.StyledAlphabetWrapper onClick={onLetterClick}>
       {alphabet.map((childAlphabet, index) => {

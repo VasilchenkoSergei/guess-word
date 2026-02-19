@@ -82,8 +82,6 @@ export default function GameBtns({
     }
   };
 
-  
-
   const onDeleteClick = () => {
     if (successWordId) return;
     setErrorWordId(null);
@@ -105,10 +103,6 @@ export default function GameBtns({
     setCurrentWordIndex(currentActiveWordIndex);
   }, []);
 
-  console.log(typedWords);
-  
-  
-  
   return (
     <S.StyledBtnWrapper>
       {isGameOver ? (

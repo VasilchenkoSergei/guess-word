@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { ThemeProvider } from 'styled-components';
-import alphabet from '@/json/russian-alphabet-keyboard.json';
 import GameSettingBtns from '@/components/GameSettingBtns';
 import Alphabet from '@/components/Alphabet';
 import TypedWords from '@/components/TypedWords';
@@ -8,6 +7,9 @@ import GameBtns from '@/components/GameBtns';
 import { GAME_SETTINGS } from '@/constants';
 import { IGameSettings, ILetter, ITheme, ITypedWord } from '@/types';
 import * as S from '@/styled';
+import { getHiddenWord } from '@/utils/get-hidden-word';
+import { getFormattedAlphabet } from '@/utils/get-formatted-alphabet';
+import { getDefaultWords } from '@/utils/get-default-words';
 
 export default function GuessWordGame({ theme }: { theme?: ITheme }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,44 +21,6 @@ export default function GuessWordGame({ theme }: { theme?: ITheme }) {
   const [formattedAlphabet, setFormattedAlphabet] = useState<ILetter[][]>([]);
   const [typedWords, setTypedWords] = useState<ITypedWord[]>([]);
 
-  const getDefaultWords = (newGameSettings: IGameSettings) => {
-    const defaultWords = [];
-
-    for (let i = 1; i <= (newGameSettings?.wordsCount as number); i++) {
-      defaultWords.push({
-        id: i,
-        word: Array(newGameSettings?.wordLength).join('.').split('.'),
-        isFull: false,
-        ...(i === 1 && { isActive: true }),
-      });
-    }
-    setTypedWords(defaultWords);
-  };
-
-  const getHiddenWord = (newGameSettings: IGameSettings) => {
-    const getRandomWord = () => {
-      const randomIndex = Math.floor(Math.random() * newGameSettings?.wordsCollection?.length) + 1;
-      return newGameSettings?.wordsCollection?.[randomIndex];
-    };
-    const currentHiddenWord = getRandomWord()?.toUpperCase();
-    setHiddenWord(currentHiddenWord);
-    setSuccessWordId(0);
-    setErrorWordId(0);
-    localStorage.setItem('hiddenWord', currentHiddenWord);
-    localStorage.setItem('wordLength', newGameSettings.wordLength.toString());
-  };
-
-  const getFormattedAlphabet = () => {
-    const correctedAlphabet = alphabet.map((alphabet) => {
-      return alphabet.map((letter) => ({
-        name: letter,
-        isExist: false,
-        isCorrectPlace: false,
-      }));
-    });
-    setFormattedAlphabet(correctedAlphabet);
-  };
-
   const changeSettings = (newGameSettings: IGameSettings) => {
     resetGame(newGameSettings);
     setGameSettings(newGameSettings);
@@ -65,16 +29,16 @@ export default function GuessWordGame({ theme }: { theme?: ITheme }) {
   const resetGame = (newGameSettings?: IGameSettings) => {
     localStorage.clear();
     setIsGameOver(false);
-    getFormattedAlphabet();
-    getDefaultWords(newGameSettings || GAME_SETTINGS[0]);
-    getHiddenWord(newGameSettings || GAME_SETTINGS[0]);
+    getFormattedAlphabet(setFormattedAlphabet);
+    getDefaultWords(newGameSettings || GAME_SETTINGS[0], setTypedWords);
+    getHiddenWord(newGameSettings || GAME_SETTINGS[0], (word) => {
+      setHiddenWord(word);
+      setSuccessWordId(0);
+      setErrorWordId(0);
+    });
   };
 
-  useEffect(() => {
-    hiddenWord && setIsLoading(false);
-  }, [hiddenWord]);
-
-  useEffect(() => {
+  const loadGameFromStorage = () => {
     const currentWordLength = localStorage.getItem('wordLength');
     const currentHiddenWord = localStorage.getItem('hiddenWord');
     const currentFormatedAlphabet = localStorage.getItem('formattedAlphabet');
@@ -92,6 +56,14 @@ export default function GuessWordGame({ theme }: { theme?: ITheme }) {
     } else {
       resetGame();
     }
+  };
+
+  useEffect(() => {
+    hiddenWord && setIsLoading(false);
+  }, [hiddenWord]);
+
+  useEffect(() => {
+    loadGameFromStorage();
   }, []);
 
   return (

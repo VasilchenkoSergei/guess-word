@@ -5,7 +5,8 @@
       "@/*": ["src/*"],
       "@/components/*": ["src/components/*"],
       "@/json/*": ["src/json/*"],
-      "@/assets/*": ["src/assets/*"]
+      "@/assets/*": ["src/assets/*"],
+      "@/utils/*": ["src/utils/*"]
     },
     "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],
