@@ -1,7 +1,6 @@
 import { defineConfig } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
 import { pluginSvgr } from '@rsbuild/plugin-svgr';
-import { pluginModuleFederation } from '@module-federation/rsbuild-plugin';
 
 export default defineConfig({
   html: {
@@ -15,29 +14,10 @@ export default defineConfig({
         namedExport: 'ReactComponent',
       },
     }),
-    pluginModuleFederation({
-      name: 'guess_word',
-      exposes: {
-        './GuessWord': './src/index.tsx',
-      },
-      filename: 'remoteEntry.js',
-      shared: {
-        react: {
-          singleton: true,
-          requiredVersion: false,
-          eager: true,
-        },
-        'react-dom': {
-          singleton: true,
-          requiredVersion: false,
-          eager: true,
-        },
-      },
-    }),
   ],
   source: {
     entry: {
-      index: './src/index.tsx',
+      index: './src/demo.tsx',
     },
   },
   output: {
@@ -66,7 +46,6 @@ export default defineConfig({
     rspack: {
       output: {
         publicPath: 'http://localhost:4040/',
-        uniqueName: 'guess_word',
       },
     },
   },

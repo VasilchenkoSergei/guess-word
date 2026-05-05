@@ -3,9 +3,19 @@
   "version": "1.0.0",
   "description": "word game",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "scripts": {
     "dev": "rsbuild dev",
-    "build": "rsbuild build",
+    "build": "tsup src/index.tsx --tsconfig tsconfig.build.json --format esm,cjs --dts --external react,react-dom,styled-components,styled-normalize --out-dir dist --clean",
+    "build:demo": "rsbuild build",
     "prepare": "npm run build"
   },
   "repository": {
@@ -38,6 +48,7 @@
     "@rsbuild/plugin-svgr": "^1.2.1",
     "@types/node": "^24.1.0",
     "@vitejs/plugin-react": "^4.4.1",
+    "tsup": "^8.5.0",
     "typescript": "^5.9.2",
     "vite": "^6.3.5",
     "vite-plugin-svgr": "^4.3.0"
@@ -53,8 +64,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "dependencies": {
-    "@module-federation/rsbuild-plugin": "^2.0.1"
   }
 }

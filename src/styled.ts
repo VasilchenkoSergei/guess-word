@@ -1,4 +1,4 @@
-import styled, { createGlobalStyle, css } from 'styled-components';
+import { styled, createGlobalStyle, css } from 'styled-components';
 import { normalize } from 'styled-normalize';
 import { DEVICE } from '@/constants';
 

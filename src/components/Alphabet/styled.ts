@@ -1,5 +1,5 @@
 import { DEVICE } from '@/constants';
-import styled, { css } from 'styled-components';
+import { styled, css } from 'styled-components';
 import { BlackColor, GrayColor, RedColor } from '@/styled';
 
 export const StyledAlphabetWrapper = styled.div`
