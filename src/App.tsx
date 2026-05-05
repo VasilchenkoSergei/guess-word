@@ -147,7 +147,6 @@ export default function GuessWordGame({ theme }: GuessWordGameProps) {
 
   return (
     <ThemeProvider theme={theme || {}}>
-      <S.GlobalStyles />
       <S.StyledGameBlockWrapper>
         <S.StyledGameWrapper>
           <S.StyledGameTitle>Угадай слово</S.StyledGameTitle>

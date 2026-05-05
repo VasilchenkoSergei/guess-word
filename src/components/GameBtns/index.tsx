@@ -1,6 +1,6 @@
 import * as S from '@/styled';
-import { ReactComponent as SuccessIcon } from '@/assets/success-icon.svg';
-import { ReactComponent as DeleteIcon } from '@/assets/delete-icon.svg';
+import { ReactComponent as SuccessIcon } from '@/assets/icons/success-icon.svg';
+import { ReactComponent as DeleteIcon } from '@/assets/icons/delete-icon.svg';
 import { IGameBtns } from './types';
 
 export default function GameBtns({ onSubmitClick, onDeleteClick }: IGameBtns) {

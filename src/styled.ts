@@ -1,5 +1,4 @@
-import { styled, createGlobalStyle, css } from 'styled-components';
-import { normalize } from 'styled-normalize';
+import { styled, css } from 'styled-components';
 import { DEVICE } from '@/constants';
 
 export const BlackColor = '#1f1f1f';
@@ -8,18 +7,35 @@ export const WhiteColor = '#f3f6ff';
 export const GrayColor = '#474747';
 export const GreenColor = '#109004';
 
-export const GlobalStyles = createGlobalStyle`
-  ${normalize};
-
-  html {
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+export const GlobalStyles = css`
+  @font-face {
+    font-family: 'opensans';
+    src:
+      local('opensans-bold'),
+      url('./assets/fonts/opensans-bold.woff2') format('woff2'),
+      url('./assets/fonts/opensans-bold.woff') format('woff'),
+      url('./assets/fonts/opensans-bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
   }
 
-  body {
-    font-family: 'opensans', Arial, sans-serif;
+  @font-face {
+    font-family: 'opensans';
+    src:
+      local('opensans'),
+      url('./assets/fonts/opensans.woff2') format('woff2'),
+      url('./assets/fonts/opensans.woff') format('woff'),
+      url('./assets/fonts/opensans.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
   }
+
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: 'opensans', Arial, sans-serif;
 
   * {
     box-sizing: inherit;
@@ -28,6 +44,7 @@ export const GlobalStyles = createGlobalStyle`
 `;
 
 export const StyledGameBlockWrapper = styled.div`
+  ${GlobalStyles};
   display: flex;
   align-items: flex-start;
 
