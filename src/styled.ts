@@ -93,6 +93,9 @@ export const StyledButton = styled.button<{
   cursor: pointer;
   font-weight: 600;
   color: ${BlackColor};
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:not(:last-child) {
     margin-right: 10px;
@@ -128,7 +131,7 @@ export const StyledButton = styled.button<{
         `
       : css`
           svg path {
-            stroke: ${BlackColor};
+            stroke: ${RedColor};
           }
         `}
 `;

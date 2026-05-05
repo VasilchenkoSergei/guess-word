@@ -9,7 +9,11 @@ import { IGameSettings, ILetter, ITheme, ITypedWord } from '@/types';
 import * as S from '@/styled';
 import { getDefaultWords, getFormattedAlphabet, getRandomWord } from './helpers';
 
-export default function GuessWordGame({ theme }: { theme?: ITheme }) {
+export interface GuessWordGameProps {
+  theme?: ITheme;
+}
+
+export default function GuessWordGame({ theme }: GuessWordGameProps) {
   const [hiddenWord, setHiddenWord] = useState('');
   const [errorWordId, setErrorWordId] = useState<number | null>(null);
   const [successWordId, setSuccessWordId] = useState<number | null>(null);
