@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import * as S from './styled';
 import { StyledButton } from '@/styled';
 import { GAME_SETTINGS } from '@/constants';
-import * as S from './styled';
 import { IGameSettingBtns } from './types';
 
 export default function GameSettingBtns({
@@ -21,7 +21,6 @@ export default function GameSettingBtns({
         ({ wordLength }) => wordLength === +chosenWordLength
       );
 
-      localStorage.setItem('wordLength', chosenWordLength.toString());
       onChangeSettingsCallback(currentGameSettings);
     }
   };

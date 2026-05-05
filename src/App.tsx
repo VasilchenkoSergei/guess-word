@@ -7,63 +7,138 @@ import GameBtns from '@/components/GameBtns';
 import { GAME_SETTINGS } from '@/constants';
 import { IGameSettings, ILetter, ITheme, ITypedWord } from '@/types';
 import * as S from '@/styled';
-import { getHiddenWord } from '@/utils/get-hidden-word';
-import { getFormattedAlphabet } from '@/utils/get-formatted-alphabet';
-import { getDefaultWords } from '@/utils/get-default-words';
+import { getDefaultWords, getFormattedAlphabet, getRandomWord } from './helpers';
 
 export default function GuessWordGame({ theme }: { theme?: ITheme }) {
-  const [isLoading, setIsLoading] = useState(true);
   const [hiddenWord, setHiddenWord] = useState('');
-  const [errorWordId, setErrorWordId] = useState(0);
-  const [successWordId, setSuccessWordId] = useState(0);
+  const [errorWordId, setErrorWordId] = useState<number | null>(null);
+  const [successWordId, setSuccessWordId] = useState<number | null>(null);
   const [isGameOver, setIsGameOver] = useState(false);
   const [gameSettings, setGameSettings] = useState<IGameSettings>(GAME_SETTINGS[0]);
-  const [formattedAlphabet, setFormattedAlphabet] = useState<ILetter[][]>([]);
+  const [formattedAlphabet, setFormattedAlphabet] = useState<ILetter[][]>(getFormattedAlphabet());
   const [typedWords, setTypedWords] = useState<ITypedWord[]>([]);
+  const [currentWordIndex, setCurrentWordIndex] = useState<number | null>(null);
 
-  const changeSettings = (newGameSettings: IGameSettings) => {
-    resetGame(newGameSettings);
-    setGameSettings(newGameSettings);
+  const getHiddenWord = (settings: IGameSettings) => {
+    setHiddenWord(getRandomWord(settings)?.toUpperCase());
+    setSuccessWordId(null);
+    setErrorWordId(null);
   };
 
-  const resetGame = (newGameSettings?: IGameSettings) => {
-    localStorage.clear();
+  const changeSettings = (settings: IGameSettings) => {
+    resetGame(settings);
+    setGameSettings(settings);
+  };
+
+  const resetGame = (settings?: IGameSettings) => {
     setIsGameOver(false);
-    getFormattedAlphabet(setFormattedAlphabet);
-    getDefaultWords(newGameSettings || GAME_SETTINGS[0], setTypedWords);
-    getHiddenWord(newGameSettings || GAME_SETTINGS[0], (word) => {
-      setHiddenWord(word);
-      setSuccessWordId(0);
-      setErrorWordId(0);
-    });
+    setFormattedAlphabet(getFormattedAlphabet());
+    getDefaultWords(settings || GAME_SETTINGS[0], setTypedWords);
+    getHiddenWord(settings || GAME_SETTINGS[0]);
   };
 
-  const loadGameFromStorage = () => {
-    const currentWordLength = localStorage.getItem('wordLength');
-    const currentHiddenWord = localStorage.getItem('hiddenWord');
-    const currentFormatedAlphabet = localStorage.getItem('formattedAlphabet');
-    const currentTypedWords = localStorage.getItem('typedWords');
+  const onChangeLettersCallback = (currentLetter: string) => {
+    const typedWordsUpdated = typedWords.map((currentWord) => {
+      if (!currentWord.isActive) return currentWord;
 
-    if (currentWordLength && currentHiddenWord && currentFormatedAlphabet && currentTypedWords) {
-      const currentGameSettings = GAME_SETTINGS.find(
-        ({ wordLength }) => wordLength === +currentWordLength
-      );
+      const currentIndex = currentWord.word.findIndex((letter) => !letter);
 
-      setGameSettings(currentGameSettings);
-      setHiddenWord(currentHiddenWord);
-      setFormattedAlphabet(JSON.parse(currentFormatedAlphabet));
-      setTypedWords(JSON.parse(currentTypedWords));
+      if (currentIndex >= 0) {
+        currentWord.word[currentIndex] = currentLetter.toUpperCase();
+      }
+
+      return currentWord;
+    });
+
+    const currentActiveWordIndex = typedWordsUpdated?.findIndex(({ isActive }) => isActive);
+
+    setCurrentWordIndex(currentActiveWordIndex);
+    setTypedWords(typedWordsUpdated);
+  };
+
+  const onSubmitClick = () => {
+    if (successWordId) return;
+
+    const activeWord = typedWords[currentWordIndex];
+    const currentWord = activeWord.word.join('');
+    if (currentWord.length < gameSettings.wordLength) return;
+
+    if (!gameSettings.wordsCollection.includes(currentWord.toLowerCase())) {
+      setErrorWordId(activeWord.id);
+      return;
+    }
+
+    if (currentWord === hiddenWord) {
+      setSuccessWordId(activeWord.id);
+      setIsGameOver(true);
+      setCurrentWordIndex(null);
+      return;
+    }
+
+    const copiedTypedWords = [...typedWords];
+    copiedTypedWords[currentWordIndex] = {
+      ...activeWord,
+      isActive: false,
+      isFull: true,
+    };
+
+    const foundLetters = hiddenWord.split('').reduce((acc, curr, index) => {
+      return {
+        ...acc,
+        [curr]: {
+          name: curr,
+          isExist: currentWord.includes(curr),
+          isCorrectPlace: hiddenWord[index] === currentWord[index],
+        },
+      };
+    }, {});
+
+    const filteredLetters = formattedAlphabet.map((childAlphabet) =>
+      childAlphabet.map((letter) => ({
+        name: letter.name,
+        isExist: !!letter.isExist || !!foundLetters[letter.name]?.isExist,
+        isCorrectPlace: !!letter.isCorrectPlace || !!foundLetters[letter.name]?.isCorrectPlace,
+      }))
+    );
+
+    setFormattedAlphabet(filteredLetters);
+
+    const isAllTypedWordsFull = Object.values(copiedTypedWords).every(({ isFull }) => isFull);
+    setCurrentWordIndex((prev) => prev + 1);
+
+    if (isAllTypedWordsFull) {
+      setIsGameOver(true);
+      setCurrentWordIndex(null);
     } else {
-      resetGame();
+      const nextWordBlock = copiedTypedWords.find(({ id }) => id === activeWord.id + 1);
+      copiedTypedWords[currentWordIndex + 1] = {
+        ...nextWordBlock,
+        isActive: true,
+      };
+      setTypedWords(copiedTypedWords);
     }
   };
 
-  useEffect(() => {
-    hiddenWord && setIsLoading(false);
-  }, [hiddenWord]);
+  const onDeleteClick = () => {
+    if (successWordId) return;
+
+    setErrorWordId(null);
+
+    const activeWord = typedWords[currentWordIndex];
+    const lastLetterIndex = activeWord.word.findLastIndex((index) => index !== '');
+    activeWord.word[lastLetterIndex] = '';
+
+    const copiedTypedWords = [...typedWords];
+    copiedTypedWords[currentWordIndex] = {
+      ...activeWord,
+      word: activeWord.word,
+    };
+
+    setTypedWords(copiedTypedWords);
+  };
 
   useEffect(() => {
-    loadGameFromStorage();
+    resetGame();
   }, []);
 
   return (
@@ -72,7 +147,7 @@ export default function GuessWordGame({ theme }: { theme?: ITheme }) {
       <S.StyledGameBlockWrapper>
         <S.StyledGameWrapper>
           <S.StyledGameTitle>Угадай слово</S.StyledGameTitle>
-          {isLoading ? (
+          {!hiddenWord ? (
             <S.StyledLoadingText>Загадываю слово...</S.StyledLoadingText>
           ) : (
             <>
@@ -85,27 +160,22 @@ export default function GuessWordGame({ theme }: { theme?: ITheme }) {
               />
               <Alphabet
                 alphabet={formattedAlphabet}
-                onChangeLettersCallback={setTypedWords}
+                onChangeLettersCallback={onChangeLettersCallback}
                 typedWords={typedWords}
               />
-              <GameBtns
-                typedWords={typedWords}
-                gameSettings={gameSettings}
-                hiddenWord={hiddenWord}
-                successWordId={successWordId}
-                setErrorWordId={setErrorWordId}
-                setSuccessWordId={setSuccessWordId}
-                setIsGameOver={setIsGameOver}
-                setTypedWords={setTypedWords}
-                formattedAlphabet={formattedAlphabet}
-                setFormattedAlphabet={setFormattedAlphabet}
-                isGameOver={isGameOver}
-                resetGame={resetGame}
-              />
+              {isGameOver ? (
+                <S.StyledBtnWrapper>
+                  <S.StyledButton onClick={() => resetGame()} $isSubmit>
+                    Начать заново
+                  </S.StyledButton>
+                </S.StyledBtnWrapper>
+              ) : (
+                <GameBtns onSubmitClick={onSubmitClick} onDeleteClick={onDeleteClick} />
+              )}
             </>
           )}
         </S.StyledGameWrapper>
-        {!isLoading && (
+        {hiddenWord && (
           <GameSettingBtns
             onChangeSettingsCallback={changeSettings}
             wordLength={gameSettings.wordLength}

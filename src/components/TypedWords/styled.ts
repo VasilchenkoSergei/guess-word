@@ -1,5 +1,5 @@
-import styled, { css } from 'styled-components';
 import { DEVICE } from '@/constants';
+import styled, { css } from 'styled-components';
 import { BlackColor, GrayColor, GreenColor, RedColor } from '@/styled';
 
 export const StyledWordsWrapper = styled.div`
@@ -165,7 +165,9 @@ export const StyledLetter = styled.div<{
     `}
 `;
 
-export const StyledGameLostText = styled.div`
+export const StyledGameLostText = styled.div<{
+  $isShown: boolean;
+}>`
   opacity: 0;
   z-index: -1;
   width: 100%;
@@ -176,4 +178,11 @@ export const StyledGameLostText = styled.div`
   text-align: center;
   top: 10%;
   left: 0;
+
+  ${({ $isShown }) =>
+    $isShown &&
+    css`
+      opacity: 1;
+      transition: all 1s;
+    `}
 `;

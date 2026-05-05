@@ -4,6 +4,9 @@ import { pluginSvgr } from '@rsbuild/plugin-svgr';
 import { pluginModuleFederation } from '@module-federation/rsbuild-plugin';
 
 export default defineConfig({
+  html: {
+    title: 'Guess word',
+  },
   plugins: [
     pluginReact(),
     pluginSvgr({

@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { DEVICE } from '@/constants';
+import styled from 'styled-components';
 
 export const StyledGameSettings = styled.div`
   display: flex;

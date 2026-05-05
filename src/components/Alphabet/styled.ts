@@ -1,5 +1,5 @@
-import styled, { css } from 'styled-components';
 import { DEVICE } from '@/constants';
+import styled, { css } from 'styled-components';
 import { BlackColor, GrayColor, RedColor } from '@/styled';
 
 export const StyledAlphabetWrapper = styled.div`
@@ -56,10 +56,6 @@ export const StyledAlphabetLetter = styled.div<{
   @media ${DEVICE.tablet} {
     width: 38px;
     height: 38px;
-  }
-
-  &:hover {
-    opacity: 0.6;
   }
 
   ${({ $isExist }) =>
