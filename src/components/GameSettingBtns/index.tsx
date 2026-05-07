@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as S from './styled';
 import { StyledButton } from '@/styled';
 import { GAME_SETTINGS } from '@/constants';
@@ -8,22 +8,24 @@ export default function GameSettingBtns({
   onChangeSettingsCallback,
   wordLength,
 }: IGameSettingBtns) {
-  const [currentWordLength, setCurrentWordLength] = useState(
-    wordLength || GAME_SETTINGS[0].wordLength
-  );
+  const [currentWordLength, setCurrentWordLength] = useState(GAME_SETTINGS[0].wordLength);
 
   const onChangeWordLength = (e: React.MouseEvent<HTMLDivElement>) => {
-    const chosenWordLength = (e.target as HTMLDivElement).dataset.id;
+    const chosenWordLength = Number((e.target as HTMLDivElement).dataset.id);
 
     if (chosenWordLength) {
-      setCurrentWordLength(+chosenWordLength);
+      setCurrentWordLength(chosenWordLength);
       const currentGameSettings = GAME_SETTINGS.find(
-        ({ wordLength }) => wordLength === +chosenWordLength
+        ({ wordLength }) => wordLength === chosenWordLength
       );
 
       onChangeSettingsCallback(currentGameSettings);
     }
   };
+
+  useEffect(() => {
+    setCurrentWordLength(wordLength ?? GAME_SETTINGS[0].wordLength);
+  }, [wordLength]);
 
   return (
     <S.StyledGameSettings onClick={onChangeWordLength}>

@@ -12,7 +12,7 @@ export default function TypedWords({
 
   return (
     <S.StyledWordsWrapper>
-      {Object.values(typedWords).map(({ id, word, isActive, isFull }) => {
+      {typedWords.map(({ id, word, isActive, isFull }) => {
         return (
           <S.StyledWord
             key={id}

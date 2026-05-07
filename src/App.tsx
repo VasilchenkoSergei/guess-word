@@ -107,7 +107,7 @@ export default function GuessWordGame({ theme }: GuessWordGameProps) {
 
     setFormattedAlphabet(filteredLetters);
 
-    const isAllTypedWordsFull = Object.values(copiedTypedWords).every(({ isFull }) => isFull);
+    const isAllTypedWordsFull = copiedTypedWords.every(({ isFull }) => isFull);
     setCurrentWordIndex((prev) => prev + 1);
 
     if (isAllTypedWordsFull) {
@@ -116,7 +116,7 @@ export default function GuessWordGame({ theme }: GuessWordGameProps) {
     } else {
       const nextWordBlock = copiedTypedWords.find(({ id }) => id === activeWord.id + 1);
       copiedTypedWords[currentWordIndex + 1] = {
-        ...nextWordBlock,
+        ...(nextWordBlock || {}),
         isActive: true,
       };
       setTypedWords(copiedTypedWords);
